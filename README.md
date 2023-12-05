@@ -88,7 +88,7 @@ This project also gave me the oportunity to add a morning notification about the
   sudo apt install pip3-AWSIoTPythonSDK
   ```
 
-  I found <a href="https://circuitdigest.com/microcontroller-projects/publish-sensor-data-to-amazon-aws-raspberry-pi-iot">this</a> walkthrough which was handy and had a neat setup for the certificates and access keys. Instead of a 'copy-paste-document' I could use the whole folder from AWS and refer to the keys and certificates in the folder. This could be good if there would be many IoThings in a IoT-solution. `something about keys/certs and security`.
+  I found <a href="https://circuitdigest.com/microcontroller-projects/publish-sensor-data-to-amazon-aws-raspberry-pi-iot">this</a> walkthrough which was handy and had a neat setup for the certificates and access keys. Instead of a 'copy-paste-document' I could use the whole folder from AWS and refer to the keys and certificates in the folder. This could be good if there would be many IoThings in a IoT-solution. 
     
 
   The terminal snippet below is made after creating your 'IoT thing' on AWS.
