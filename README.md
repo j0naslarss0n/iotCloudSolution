@@ -1,20 +1,14 @@
 <html>
-<style>
-img {
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-}
-</style>
+
 
 <div id="top"></div>
 
 <div align="center">
-  <a href="https://github.com/j0naslarss0n/iotCloudSolution">
-    <img src="assets/logo.png" alt="Logo" width="80" height="80">
+  <a href="https://github.com/j0naslarss0n">
+    <img src="assets/logo.png" alt="Logo" width="" height="60">
   </a>
 
-  <p align="center">Jonas Larsson, IoT och Molntjänster vid Nackademin 2023</p>
+  <p align="center">Jonas Larsson, IoT och Molntjänster, Nackademin 2023</p>
   <br>
 
   </br>
@@ -142,9 +136,11 @@ When creating a account at AWS, make sure to chose a server that contains the AW
 
 
 
-I initially created a thing in <i>`AWS Iot -> All devices -> Things and Create thing`</i> chose a name and press next. Chose Autogenerate certificate and attach a policy, if there isn't any then create a policy to your thing and download the whole folder with keys and certificates (to give your physical thing access).
-The policy is created within the AWS IoT in <i>`AWS Iot-> Security -> Policies`</i>. They can be made with the builder or written in json and should look something like this in json. Copy the downloaded certificate folder and files with scp to your device, in my case the Raspberry Pi3, so that it is accessable for your script.
-With the <i>`MQTT test client`</i> you should be able to see your device pushing in data with your topic or see all with `#` flag. 
+I initially created a thing in <i><b>AWS Iot -> All devices -> Things and Create thing</i></b> chose a name and press next. Chose Autogenerate certificate and attach a policy, if there isn't any then create a policy to your thing and download the whole folder with keys and certificates (to give your physical thing access).
+The policy is created within the AWS IoT in <i><b>AWS Iot-> Security -> Policies</i></b>. They can be made with the builder or written in json and should look something like this in json. 
+
+Copy the downloaded certificate folder and files with scp to your device, in my case the Raspberry Pi3, so that it is accessable for your script.
+With the <i><b>MQTT test client</i></b> you should be able to see your device pushing in data with your topic or see all with `#` flag. 
 I set my topic as `area/thing-name/source/pub`.
 
 ```{
@@ -179,7 +175,7 @@ I set my topic as `area/thing-name/source/pub`.
 
 I chose to create a both DynamoDB and Timestream but most of this could be done with only Timestream database.
 
-Create a table from <i>`Tables > Create table`</i>. Enter a name and partion key and sortkey, in my case I chose <b>device_id(String)</b> and <b>timestamp(Number)</b>.
+Create a table from <i><b>Tables > Create table</b></i>. Enter a name and partion key and sortkey, in my case I chose <b>device_id(String)</b> and <b>timestamp(Number)</b>.
 
 <img align="center" src="assets/temperature_table_screen.png" alt="AWS screenshot of temperature_table - general information" width="500" height="">
 
@@ -200,9 +196,9 @@ Create a database and leave the encryption to `aws/timestream`, then create a ta
 
 .
 
-For your table chose the database you just created and chose a name for your table. Make `custom partioning` and chose <b> Dimension </b> as `partition key type`. In `partition key name` chose your device or use the topic position that contain the device name,  `${topic(2)}`.
+For your table chose the database you just created and chose a name for your table. Make <i><b>custom partioning</i></b> and chose <b><i> Dimension </b></i> as <i><b>partition key type</i></b>. In <i><b>partition key name</i></b> chose your device or use the topic position that contain the device name,  <i><b>${topic(2)}</i></b>.
 
-There was a parameter that took me some while to figure out as I couldn't insert my `timestamp`. It appeared that 'timestamp' _have to be_ in microseconds in Timestream (discussed here), I made a dirty workaround for this occasion, as seen in the Lambda-function for SMHI.
+There was a parameter that took me some while to figure out as I couldn't insert my <b>timestamp</b>. It appeared that 'timestamp' _have to be_ in microseconds in Timestream (discussed here), I made a dirty workaround for this occasion, as seen in the Lambda-function for SMHI.
 
 ---
 <h3 align="center">Lambda</h2>
@@ -220,7 +216,7 @@ There may be a proper workaround but I simply added the extra hour in the script
 In a similar fascion I made Lambda functions to get data from SMHI and from the AWS IoT and both them two sent it to the Timestream database.
 This cronjob was set to fetch the data second minute every hour as shown below.
 
-<img src="assets/eventbridge_schedule.png" alt="AWS screenshot of temperature_table - general information" width="300" height="">
+<img src="assets/eventbridge_schedule.png" alt="AWS Eventbridge" width="300" height="">
 
 .
 
@@ -243,7 +239,7 @@ Now I know every morning if there's a need for long underpants or not, and when 
 
 <h3 align="center">Grafana </h3>
 
-Grafana is nice tool I hadn't used before. From Grafana I was able to connect and get the data from Timestream DB, addressing the database and table with a SQL-query.
+Grafana is nice tool I hadn't used before. From Grafana I was able to connect and get the data from Timestream DB, addressing the database and table with a SQL-query. I found it quite intriguing that the gap of 2-4 C between my measurement and that from SMHI. While SMHIs is accurate, my measure could indicate of heat leakage from the house, my camparibly poor hardware, or that my house is in a urban neighberhood and not in the open on a airport. Regardless I found it interesting. 
 
 The query made in Grafana for the my RPi3_B, one of the datasets.
 
@@ -278,7 +274,7 @@ Grafana output: Bromma flygplats (green), Gröndal (yellow).
 While some measures have been taken to secure this project (AWS wont allow less) there are some that hasn't. Connecting the 'thing' with end-2-end ecryption is something that cannot be circumviened. Also keeping your IoT devices to least-privilage when it comes to policies (as mentioned in the AWS IoT section above), no unit should have more priviliges then what the unit need to complete it's task.
 
 
-The same goes for roles, within the AWS ecosystem there's the `IAM` tool, this address each user not to have more then sufficient amount of access to do their tasks. 
+The same goes for roles, within the AWS ecosystem there's the <i><b>IAM</i></b> tool, this address each user not to have more then sufficient amount of access to do their tasks. 
 
 During this project I have been on the root account, this is by default on any system a malpractice. To keep a IoT-solution secure users should, aswell as units and devices, follow the principle of least-privilage.
 </p>
@@ -289,6 +285,12 @@ When it comes to scalability AWS handles much of this as the serivice. It should
 
 The API Gateway adjust to handle requests, thus handle incoming API traffic and to reduce load on backend services. 
 
+
+---
+
+Tack till Johan Holmberg för en kanonkurs och alla i IoT22 på Nackademin.
+
+Jonas Larsson 2023
 </p>
 
 </div>
