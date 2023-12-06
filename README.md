@@ -186,7 +186,7 @@ Create a table from <i><b>Tables > Create table</b></i>. Enter a name and partio
 
 AWS S3 (Simple Storage Service) is a cold storage service that allow you to long term save your data. I didn't do this as it comes with a fee outside the scope of this exercise. If S3 would be needed this would also need to turn on the AWS point-in-time-recovery(PiTR) on your DynamoDB service. To enable this you can see the edit button on the picture above. 
 
-As S3 is scalable this is cheaper storage then other more conventional storage and to DynamoDB and Timestream. This would be a more viable solution over time as you pay for what you use. S3 also provide possibilities to build data lakes for analytics and BI, as well as a recovery tool and options to build towards cloud based web applications.
+As S3 is scalable this is cheaper storage then other more conventional storage and to DynamoDB and Timestream, which are event based databases. This would be a more viable solution over time as you pay for what you use. S3 also provide possibilities to build data lakes for analytics and BI, as well as a recovery tool and options to build towards cloud based web applications.
 
 ---
 <h3 align="center">Timestream</h2>
@@ -257,6 +257,8 @@ WHERE device_id='RPi3_B'
 
 Grafana output: Bromma flygplats (green), Gröndal (yellow).
 <img src="assets/grafana.png" alt="Grafana output graph" width="" height="">
+<img src="assets/grafana02.png" alt="Grafana output graph" width="" height="">
+
 
 ---
 </p>
@@ -280,7 +282,7 @@ The webhook key and path is stored in the script of the Lambda function, which i
 
 The same goes for roles, within the AWS ecosystem there's the <i><b>IAM</i></b> tool, this address each user not to have more then sufficient amount of access to do their tasks. 
 
-One example of how roles play a part in this solution, Grafana was only given a read-access privilage to fetch data. 
+One example of how roles play a part in this solution is that Grafana was only given a read-access privilage to fetch data. 
 
 During this project I have been on the root account, this is by default on any system a malpractice. To keep a IoT-solution secure users should, aswell as units and devices, follow the principle of least-privilage.
 </p>
