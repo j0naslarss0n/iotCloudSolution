@@ -98,8 +98,8 @@ This project also gave me the oportunity to add a morning notification about the
 .
 ├── RPi3_policy
 │   ├── f44f4106df9/.../dsa32h8179-certificate.pem.crt
-│   ├── 201f44f4106df/.../8134fsasdkk279-private.pem.key
-│   ├── 1f44f4106df9/.../esd982dase8928179-public.pem.key
+│   ├── 201f44f4106/.../sdkk279-private.pem.key
+│   ├── 1f44f4106df/.../esd982d8179-public.pem.key
 │   ├── AmazonRootCA1.pem
 │   └── AmazonRootCA3.pem
 └── temp_pub.py
@@ -139,9 +139,7 @@ When creating a account at AWS, make sure to chose a server that contains the AW
 I initially created a thing in <i><b>AWS Iot -> All devices -> Things and Create thing</i></b> chose a name and press next. Chose Autogenerate certificate and attach a policy, if there isn't any then create a policy to your thing and download the whole folder with keys and certificates (to give your physical thing access).
 The policy is created within the AWS IoT in <i><b>AWS Iot-> Security -> Policies</i></b>. They can be made with the builder or written in json and should look something like this in json. 
 
-Copy the downloaded certificate folder and files with scp to your device, in my case the Raspberry Pi3, so that it is accessable for your script.
-With the <i><b>MQTT test client</i></b> you should be able to see your device pushing in data with your topic or see all with `#` flag. 
-I set my topic as `area/thing-name/source/pub`.
+
 
 ```{
   "Version": "2012-10-17",
@@ -170,10 +168,14 @@ I set my topic as `area/thing-name/source/pub`.
 }
 ```
 
+Copy the downloaded certificate folder and files with scp to your device, in my case the Raspberry Pi3, so that it is accessable for your script.
+With the <i><b>MQTT test client</i></b> you should be able to see your device pushing in data with your topic or see all with `#` flag. 
+I set my topic as `area/thing-name/source/pub`.
+
 ---
 <h3 align="center">DynamoDB</h2>
 
-I chose to create a both DynamoDB and Timestream but most of this could be done with only Timestream database.
+I chose to create a both DynamoDB and Timestream databases but most of this could be done with only Timestream database.
 
 Create a table from <i><b>Tables > Create table</b></i>. Enter a name and partion key and sortkey, in my case I chose <b>device_id(String)</b> and <b>timestamp(Number)</b>.
 
@@ -182,8 +184,9 @@ Create a table from <i><b>Tables > Create table</b></i>. Enter a name and partio
 ---
 <h3 align="center">S3</h2>
 
-AWS S3 is a cold storage service that allow you to long term save your data. I didn't do this as it comes with a fee outside the scope of this exercise. If S3 would be needed this would also need to turn on the AWS point-in-time-recovery(PiTR) on your DynamoDB service. To enable this you can see the edit button on the picture above. 
+AWS S3 (Simple Storage Service) is a cold storage service that allow you to long term save your data. I didn't do this as it comes with a fee outside the scope of this exercise. If S3 would be needed this would also need to turn on the AWS point-in-time-recovery(PiTR) on your DynamoDB service. To enable this you can see the edit button on the picture above. 
 
+As S3 is scalable this is cheaper storage then other more conventional storage and to DynamoDB and Timestream. This would be a more viable solution over time as you pay for what you use. S3 also provide possibilities to build data lakes for analytics and BI, as well as a recovery tool and options to build towards cloud based web applications.
 
 ---
 <h3 align="center">Timestream</h2>
@@ -239,7 +242,7 @@ Now I know every morning if there's a need for long underpants or not, and when 
 
 <h3 align="center">Grafana </h3>
 
-Grafana is nice tool I hadn't used before. From Grafana I was able to connect and get the data from Timestream DB, addressing the database and table with a SQL-query. I found it quite intriguing that the gap of 2-4 C between my measurement and that from SMHI. While SMHIs is accurate, my measure could indicate of heat leakage from the house, my camparibly poor hardware, or that my house is in a urban neighberhood and not in the open on a airport. Regardless I found it interesting. 
+Grafana is nice tool I hadn't used before. From Grafana I was able to connect and get the data from Timestream DB, addressing the database and table with a SQL-query. I found it quite intriguing that the gap of 2-4 C between my measurement and that from SMHI. While SMHIs is accurate, my measure could indicate of heat leakage from the house, my camparibly poor hardware, or that my house is in a urban neighberhood and not in the open on a airport, and of course sun light should be taken into account. Regardless I found the differens quite it interesting. 
 
 The query made in Grafana for the my RPi3_B, one of the datasets.
 
@@ -273,8 +276,11 @@ Grafana output: Bromma flygplats (green), Gröndal (yellow).
 
 While some measures have been taken to secure this project (AWS wont allow less) there are some that hasn't. Connecting the 'thing' with end-2-end ecryption is something that cannot be circumviened. Also keeping your IoT devices to least-privilage when it comes to policies (as mentioned in the AWS IoT section above), no unit should have more priviliges then what the unit need to complete it's task.
 
+The webhook key and path is stored in the script of the Lambda function, which is a poor practice, instead I could have used AWS secrets manager, or any other similar appropriate service from AWS.
 
 The same goes for roles, within the AWS ecosystem there's the <i><b>IAM</i></b> tool, this address each user not to have more then sufficient amount of access to do their tasks. 
+
+One example of how roles play a part in this solution, Grafana was only given a read-access privilage to fetch data. 
 
 During this project I have been on the root account, this is by default on any system a malpractice. To keep a IoT-solution secure users should, aswell as units and devices, follow the principle of least-privilage.
 </p>
@@ -283,7 +289,9 @@ During this project I have been on the root account, this is by default on any s
 <p>
 When it comes to scalability AWS handles much of this as the serivice. It should be possible to add many 'things' to above solution without slowing it down. Be that both vertically or horizontally.
 
-The API Gateway adjust to handle requests, thus handle incoming API traffic and to reduce load on backend services. 
+The API Gateway adjust to handle requests, thus handle incoming API traffic and to reduce load on backend services, this also prevents malicius load like for instance a DDoS attack.
+
+Overall AWS is a scalable solution that would be benificial to smaller service clients with a more pay-as-you-go approach compared to a selfhosted setup.
 
 
 ---
