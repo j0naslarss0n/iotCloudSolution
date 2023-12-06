@@ -22,7 +22,7 @@ def lambda_handler(event, context):
         print("temp sent", temperature)
 
         # Send the temperature value to Discord
-        webhook = DiscordWebhook(url="https://discord.com/api/webhooks/1179720628106960916/k46deNh5Nb2BtkTSIKufz6IRIxz4DLm8PZpP0uXK-ionCqC2ucLaiOSCvTuAh9HmKCzv")
+        webhook = DiscordWebhook(url="https://discord.com/api/webhooks/XXXXXXXXXXXXXXXXXXXXXXXXXXXXionCqC2ucLaiOSCvTuAh9HmKCzv")
 
         # You can customize the embed as needed
         embed = DiscordEmbed(
